@@ -86,7 +86,7 @@ int main(int argc, char **argv)
     const int SIZE = 8;
     int arr[SIZE]{7, 2, 0, 10, 5, 8, 6, 4};
 
-    // fill(SIZE, arr);
+    fill(SIZE, arr);
     print(SIZE, arr);
 
     mergeSort(arr, 0, SIZE - 1);
