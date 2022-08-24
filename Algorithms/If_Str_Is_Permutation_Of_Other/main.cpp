@@ -23,7 +23,7 @@ bool isPermutation(std::string &s1, std::string &s2)
     return true;
 }
 
-// O(n) by using hashtable
+// O(n)
 bool isPermutation(std::string &s1, std::string &s2, bool array)
 {
     const int s1_size = s1.size();
@@ -35,9 +35,9 @@ bool isPermutation(std::string &s1, std::string &s2, bool array)
     int letters[128];
     for(int i = 0; i < 128; i++)
         letters[i] = 0;
+
     for (int i = 0; i < s1_size; i++)
         letters[s1[i]]++;
-
     for (int i = 0; i < s2_size; i++)
     {
         letters[s2[i]]--;
