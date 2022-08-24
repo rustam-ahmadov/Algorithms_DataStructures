@@ -68,7 +68,7 @@ int main(int argc, char **argv)
 {
 
     std::string str = "ruar";
-    std::cout << isUniqueChars(str, true);
+    std::cout << isUniqueChars(str);
 
     int num = 3;
     num << 1;
