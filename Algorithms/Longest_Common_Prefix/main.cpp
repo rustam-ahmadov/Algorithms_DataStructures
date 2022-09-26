@@ -1,39 +1,48 @@
 #include <iostream>
 
-std::string commonPrefixUtil(std::string &s1, std::string &s2)
+std::string commonPrefix(std::string &s1, std::string &s2)
 {
-    int s_length = std::min(s1.size(), s2.size());
-    std::string common_prefix = "";
+    int s1_size = s1.size(), s2_size = s2.size();
+    std::string com_pref = "";
+    int n = s1_size <= s2_size ? s1_size : s2_size;
 
-    for (int i = 0; i < s_length; i++)
+    if (!n)
+        return com_pref;
+
+    for (int i = 0; i < n; i++)
     {
         if (s1[i] != s2[i])
             break;
-        common_prefix.push_back(s1[i]);
+        com_pref.push_back(s1[i]);
     }
-    return common_prefix;
+    return com_pref;
 }
 
-std::string commonPrefix(std::string arr[], int n)
+std::string getLongestCommonPrefix(std::string *str_arr, int n)
 {
-    std::string prefix = arr[0];
+    std::string longest_com_pref = " ";
+    if(n<2)
+        return longest_com_pref;
 
-    for (int i = 1; i < n; i++)
-        prefix = commonPrefixUtil(prefix, arr[i]);
-
-    return (prefix);
+    longest_com_pref = commonPrefix(str_arr[0],str_arr[1]);
+    if(n==2)
+        return longest_com_pref;
+    
+    for(int i = 2; i < n; i++)
+    {
+        longest_com_pref = commonPrefix(longest_com_pref,str_arr[i]);
+    }
+    return longest_com_pref;
 }
 int main(int argc, char **argv)
 {
 
-    std::string s1 = "123Rustam";
-    std::string s2 = "123Ruslan";
-    std::string s3 = "123Namiq";
+    std::string *str_arr = new std::string[2]; 
+    str_arr[0] = "123Rustam";
+    str_arr[1] = "123Ruslan";
+    str_arr[2] = "123Namiq";
 
-    std::string strs[3] = {s1, s2, s3};
-
-    std::string common_prefix = commonPrefix(strs, 3);
-    std::cout << common_prefix;
+    std::cout<<getLongestCommonPrefix(str_arr,3);
 
     return 0;
 }
