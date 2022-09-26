@@ -10,7 +10,7 @@ void deleteRandomNode(List::node *&node)
 }
 
 // O(1)
-void deleteNode(List::node *node)
+void deleteNode(List::node *&node)
 {
     if (node == nullptr)
         return;
@@ -18,6 +18,7 @@ void deleteNode(List::node *node)
     if (node->next == nullptr)
     {
         delete node;
+        node = nullptr;
         return;
     }
     List::node *temp = node->next;
@@ -33,7 +34,7 @@ int main(int argc, char **argv)
     list.pushBack(2);
     list.pushBack(3);
     list.pushBack(4);
-    deleteNode(list.head->next->next->next);
+    deleteNode(list.head->next->next);
     list.print();
 
     return 0;

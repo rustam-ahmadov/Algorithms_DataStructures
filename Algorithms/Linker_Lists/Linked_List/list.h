@@ -21,7 +21,7 @@ public:
 
     void print()
     {
-        if (!size)
+        if (!size&&!head)
             return;
 
         node *temp = head;
