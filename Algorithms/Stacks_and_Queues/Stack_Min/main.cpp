@@ -9,6 +9,7 @@ int main(int argc, char **argv)
     m.push(3);
     m.push(1);
     m.push(0);
+    m.push(-1);
     std::cout<<m.getMin();
     return 0;
 }
