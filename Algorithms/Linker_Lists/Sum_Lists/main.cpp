@@ -1,5 +1,6 @@
 #include "../Linked_List/list.h"
 
+<<<<<<< HEAD
 // int reverse(int num)
 // {
 //     int reversed = 0;
@@ -21,15 +22,67 @@ struct ListNode
 };
 
 int reverse(int num)
+=======
+struct ListNode
+>>>>>>> 1f0a3cd389d8bc42646d5e6efb382477ae2813df
 {
-    int reversed = 0;
-    while (num)
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
+ListNode *addSum(ListNode *l1, ListNode *l2)
+{
+    ListNode *tail = nullptr;
+    ListNode *head = nullptr;
+    bool check = false;
+
+    while (l1 || l2)
     {
-        reversed = reversed * 10 + num % 10;
-        num /= 10;
+        int sum = 0, digit1 = 0, digit2 = 0;
+        if (l1)
+            digit1 = l1->val;
+        if (l2)
+            digit2 = l2->val;
+
+        if (check)
+            sum = digit1 + digit2 + 1;
+        else
+            sum = digit1 + digit2;
+
+        if (sum >= 10)
+        {
+            sum = sum % 10;
+            check = true;
+        }
+        else
+            check = false;
+
+        if (head)
+        {
+            tail->next = new ListNode(sum);
+            tail = tail->next;
+        }
+        else
+        {
+            head = new ListNode(sum);
+            tail = head;
+        }
+
+        if (l1)
+            l1 = l1->next;
+        if (l2)
+            l2 = l2->next;
     }
-    return reversed;
+    if (check)
+    {
+        tail->next = new ListNode(1);
+    }
+    return head;
 }
+<<<<<<< HEAD
 ListNode *addTwoNumbers(ListNode *l1, ListNode *l2)
 {
 
@@ -95,5 +148,36 @@ int main(int argc, char **argv)
         std::cout << head2->val << ' ';
         head2 = head2->next;
     }
+=======
+
+// 156 = 651
+// 295 = 592
+//     +
+// 3421 1243
+
+int main(int argc, char **argv)
+{
+
+    ListNode *l1 = new ListNode(9);
+    l1->next = new ListNode(9);
+    l1->next->next = new ListNode(9);
+
+    ListNode *l2 = new ListNode(9);
+    l2->next = new ListNode(9);
+    l2->next->next = new ListNode(9);
+    l2->next->next->next = new ListNode(9);
+    l2->next->next->next->next = new ListNode(9);
+
+    ListNode *sum = addSum(l1, l2);
+
+    while (sum)
+    {
+        std::cout << sum->val << ' ';
+        sum = sum->next;
+    }
+
+    std::cout << '\n';
+
+>>>>>>> 1f0a3cd389d8bc42646d5e6efb382477ae2813df
     return 0;
 }
