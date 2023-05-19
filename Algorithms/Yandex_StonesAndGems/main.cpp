@@ -42,13 +42,9 @@ int gemsCountWithTable(std::string& s, std::string& j)
     int gems_count_in_stones = 0;
     for(int i = 0; i < COMMON_STONES_SIZE; i++)
     {
-        int asci_sym = gems_table[s[i] - ASCI_LET_START_POS];
-        if(asci_sym > 0 && asci_sym < 2)
-        {
-            gems_table[s[i] - ASCI_LET_START_POS]++;
-                        gems_count_in_stones++;
-
-        }
+        int asci_sym_of_stone = gems_table[s[i] - ASCI_LET_START_POS];
+        if(asci_sym_of_stone > 0)        
+            gems_count_in_stones++;        
     }
 
     return gems_count_in_stones;
@@ -57,7 +53,7 @@ int gemsCountWithTable(std::string& s, std::string& j)
 int main(int argc, char** argv){
 
     std::string j = "aeyuio";
-    std::string s = "uieaorustiammatsooooeeeeeeeeeoooour";
+    std::string s = "rustiammaaaaaaaatsr";
 
     
     int gems_count = gemsCountWithTable(s,j);
