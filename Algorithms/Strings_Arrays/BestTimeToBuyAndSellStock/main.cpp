@@ -22,16 +22,23 @@ int maxProfit(std::vector<int> &prices)
     return maxProfit;
 }
 
-//O(n)
+// O(n)
 int maxProfitN(std::vector<int> &prices)
 {
-    int maxProfit = 0, leastPrice = INT_MAX, profit = 0;
     const int n = prices.size();
 
-    for (int i = 0; i < n; i++)
+    if (n == 0)
+        return 0;
+
+    int maxProfit = 0, leastPrice = prices[0], profit = 0;
+
+    for (int i = 1; i < n; i++)
     {
         if (prices[i] < leastPrice)
+        {
             leastPrice = prices[i];
+            continue;
+        }
         profit = prices[i] - leastPrice;
         if (maxProfit < profit)
             maxProfit = profit;
