@@ -27,19 +27,16 @@ int maxProfitN(std::vector<int> &prices)
 {
     const int n = prices.size();
 
-    if (n == 0)
-        return 0;
-
-    int maxProfit = 0, leastPrice = prices[0], profit = 0;
-
+    int bestDay = 0;
+    int profit = 0;
+    int maxProfit = 0;
     for (int i = 1; i < n; i++)
     {
-        if (prices[i] < leastPrice)
-        {
-            leastPrice = prices[i];
-            continue;
-        }
-        profit = prices[i] - leastPrice;
+        if (prices[bestDay] > prices[i])
+            bestDay = i;
+        else
+            profit = prices[i] - prices[bestDay];
+
         if (maxProfit < profit)
             maxProfit = profit;
     }
