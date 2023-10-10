@@ -1,31 +1,36 @@
 #include <stack>
 #include <iostream>
 
-class Min_Stack
+class MinStack
 {
-    std::stack<int> min_s;
-    std::stack<int> s;
+    std::stack<int> _min;
+    std::stack<int> _stack;
 
 public:
+    MinStack() {}
+
     void push(int val)
     {
-        s.push(val);
-        if (min_s.empty() || min_s.top() >= val)
-            min_s.push(val);
+        if (getMin() > val || _min.empty())
+            _min.push(val);
+
+        _stack.push(val);
     }
+
     void pop()
     {
-        if (s.top() == min_s.top())
-            min_s.pop();
-        s.pop();
+        if (_stack.top() == getMin())
+            _min.pop();
+        _stack.pop();
     }
+
     int top()
     {
-        return s.top();
+        return _stack.top();
     }
 
     int getMin()
     {
-        return min_s.top();
+        return _min.top();
     }
 };

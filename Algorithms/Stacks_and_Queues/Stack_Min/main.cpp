@@ -1,15 +1,21 @@
-#include"min_stack.h"
+#include "min_stack.h"
+#include <iostream>
 
 int main(int argc, char **argv)
 {
-    Min_Stack m;
-    m.push(4);
-    m.push(5);
-    m.push(2);
-    m.push(3);
-    m.push(1);
+    MinStack m;
     m.push(0);
-    m.push(-1);
-    std::cout<<m.getMin();
+    m.push(1);
+    m.push(-10);
+    m.push(-9);
+
+    std::cout << m.getMin();
+    std::cout<<'\n';
+    m.pop();
+    std::cout << m.getMin();
+    std::cout<<'\n';
+    m.pop();
+    std::cout << m.getMin();
+    std::cout<<'\n';
     return 0;
 }
