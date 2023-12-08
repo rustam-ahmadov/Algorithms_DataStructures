@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-
 )
 
 var closingToOpening = map[byte]byte{
@@ -22,19 +21,18 @@ func isValid(s string) bool {
 			continue
 		}
 
-		if len(stack) == 0{
+		if len(stack) == 0 {
 			return false
 		}
 
-		if stack[len(stack) - 1] != opening {
+		if stack[len(stack)-1] != opening {
 			return false
 		}
 
-		stack = stack[: len(stack) - 1]
+		stack = stack[:len(stack)-1]
 	}
 	return len(stack) == 0
 }
-
 
 func main() {
 
