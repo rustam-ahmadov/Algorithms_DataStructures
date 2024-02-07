@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"reflect"
+	"sort"
+)
 
 // Constraints:
 
@@ -8,32 +12,27 @@ import "fmt"
 // -10 <= nums[i] <= 10
 
 func subsetsWithDup(nums []int) [][]int {
-	res := [][]int{{}}
-	
-	// helper(&res, nums, nil, 0, 1)
-	// return res
+	res := [][]int{}
 
-	for i := 0; i < len(nums); i++ {
-		cur := []int{nums[i]}
-		res = append(res, cur)
-		for j := i + 1; j < len(nums); j++ {
-			cur = append(append([]int{}, cur...), nums[j])
-			res = append(res, cur)
-		}
-	}
+	// O(n (log n))
+	sort.SliceStable(nums, func(i, j int) bool { return nums[i] < nums[j] })
+	helper(&res, nums, nil, 0)
 	return res
 }
 
-// func helper(res *[][]int, nums []int, cur []int, l int, r int) {
-// 	for i := l; i < r && i < len(nums); i++ {
-// 		*res = append(*res, []int{nums[i]})
-// 		new := append(append([]int{}, cur...), nums[i])
-// 		helper(res, nums, new, l+1, l+2)
-// 	}
-// 	*res = append(*res, cur)
-// }
+func helper(res *[][]int, nums []int, cur []int, index int) {
+	*res = append(*res, cur)
+	prev := []int{}
+	for i := index; i < len(nums); i++ {
+		new := append(append([]int{}, cur...), nums[i])
+		if !reflect.DeepEqual(prev, new) {
+			helper(res, nums, new, i + 1)
+		}
+		prev = new
+	}
+}
 
 func main() {
-	nums := []int{1, 2, 2, 2}
+	nums := []int{1, 2, 2}
 	fmt.Println(subsetsWithDup(nums))
 }
