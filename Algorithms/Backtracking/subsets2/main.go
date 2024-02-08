@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"reflect"
 	"sort"
 )
 
@@ -16,19 +15,18 @@ func subsetsWithDup(nums []int) [][]int {
 
 	// O(n (log n))
 	sort.SliceStable(nums, func(i, j int) bool { return nums[i] < nums[j] })
-	helper(&res, nums, nil, 0)
+	helper(&res, nums, nil)
 	return res
 }
 
-func helper(res *[][]int, nums []int, cur []int, index int) {
+func helper(res *[][]int, nums []int, cur []int) {
 	*res = append(*res, cur)
-	prev := []int{}
-	for i := index; i < len(nums); i++ {
+	for i := 0; i < len(nums); i++ {
 		new := append(append([]int{}, cur...), nums[i])
-		if !reflect.DeepEqual(prev, new) {
-			helper(res, nums, new, i + 1)
+		if i > 0 && nums[i] == nums[i-1] {
+			continue
 		}
-		prev = new
+		helper(res, nums[i+1:], new)
 	}
 }
 
