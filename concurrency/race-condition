@@ -1,0 +1,31 @@
+package main
+
+import (
+	"fmt"
+	"sync"
+	// "time"
+)
+
+func main() {
+	var wg sync.WaitGroup
+	wg.Add(2)
+	num := 0
+	// Goroutine 1
+	go func() {
+		defer wg.Done()
+		for i := 0; i < 100000; i++ {
+			num += 1
+		}
+	}()
+
+	// Goroutine 2
+	go func() {
+		defer wg.Done()
+		for i := 0; i < 100000; i++ {
+			num += 1
+		}
+	}()
+
+	wg.Wait()
+	fmt.Println(num)
+}
