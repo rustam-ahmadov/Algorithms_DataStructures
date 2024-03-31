@@ -1,9 +1,6 @@
 package main
 
-import (
-	"fmt"
-	"strconv"
-)
+import "fmt"
 
 var oneDigitNames = map[int]string{
 	0: "sıfır",
@@ -46,13 +43,6 @@ const fourDigitName = " min"
 const sevenDigitName = " milyon"
 const tenDigitsName = " milyard"
 
-func convert(num int) string {
-	if num == 0 {
-		return oneDigitNames[num]
-	}
-	return helper(num, true, 1, 1)
-}
-
 func addAdditionalWordInFrontIfNeeded(last, next int, current, additional string) string {
 	if last == 1 && next == 0 {
 		return additional + current
@@ -60,17 +50,26 @@ func addAdditionalWordInFrontIfNeeded(last, next int, current, additional string
 	return current
 }
 
+func convert(num int) string {
+	if num == 0 {
+		return oneDigitNames[num]
+	}
+	return helper(num, true, 1, 1)
+}
+
 func helper(num int, isCategoryWordAdded bool, digitPosition int, digitCount int) string {
 	cur := num % 10
 	leftNum := num / 10
-	if cur == 0 { //we just pass it to the next lvl
-		return helper(leftNum, isCategoryWordAdded, digitPosition+1, digitCount+1)
-	}
 
 	if digitPosition > 3 {
 		digitPosition = 1
 		isCategoryWordAdded = false
 	}
+
+	if cur == 0 { //we just pass it to the next lvl
+		return helper(leftNum, isCategoryWordAdded, digitPosition+1, digitCount+1)
+	}
+
 	var res string
 	switch digitPosition {
 	case 1:
@@ -101,28 +100,28 @@ func helper(num int, isCategoryWordAdded bool, digitPosition int, digitCount int
 }
 
 func main() {
-	//fmt.Printf("%s%c\n", convert(1), '*')               //ok
-	//fmt.Printf("%s%c\n", convert(10), '*')              //1 2 3
-	//fmt.Printf("%s%c\n", convert(100), '*')             //1 2 3
-	//fmt.Printf("%s%c\n", convert(1_000), '*')           //1 2 3
-	//fmt.Printf("%s%c\n", convert(10_000), '*')          //1 2 3
-	//fmt.Printf("%s%c\n", convert(100_000), '*')         //1 2 3
-	//fmt.Printf("%s%c\n", convert(1_000_000), '*')       //1 2 3
-	//fmt.Printf("%s%c\n", convert(10_000_000), '*')      //1 2 3
-	//fmt.Printf("%s%c\n", convert(100_000_000), '*')     //1 2 3
-	//fmt.Printf("%s%c\n", convert(1_000_000_000), '*')   //1 2 3
-	//fmt.Printf("%s%c\n", convert(10_000_000_000), '*')  //1 2 3
-	//fmt.Printf("%s%c\n", convert(113_168_135_431), '*') //1 2 3
-	//fmt.Printf("%s%c\n", convert(1123), '*')            //1 2 3
-	//fmt.Printf("%s%c\n", convert(353), '*')             //1 2 3
-	//fmt.Printf("%s%c\n", convert(349_111_123), '*')     //1 2 3
-	//fmt.Printf("%s%c\n", convert(88_999_123), '*')      //1 2 3
-	//fmt.Printf("%s%c\n", convert(0), '*')               //1 2 3
-
-	num, err := strconv.Atoi("40")
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(convert(num))
+	fmt.Printf("%s%c\n", convert(1), '*')               //ok
+	fmt.Printf("%s%c\n", convert(10), '*')              //1 2 3
+	fmt.Printf("%s%c\n", convert(100), '*')             //1 2 3
+	fmt.Printf("%s%c\n", convert(1_000), '*')           //1 2 3
+	fmt.Printf("%s%c\n", convert(10_000), '*')          //1 2 3
+	fmt.Printf("%s%c\n", convert(100_000), '*')         //1 2 3
+	fmt.Printf("%s%c\n", convert(1_000_000), '*')       //1 2 3
+	fmt.Printf("%s%c\n", convert(10_000_000), '*')      //1 2 3
+	fmt.Printf("%s%c\n", convert(100_000_000), '*')     //1 2 3
+	fmt.Printf("%s%c\n", convert(1_000_000_000), '*')   //1 2 3
+	fmt.Printf("%s%c\n", convert(10_000_000_000), '*')  //1 2 3
+	fmt.Printf("%s%c\n", convert(113_168_135_431), '*') //1 2 3
+	fmt.Printf("%s%c\n", convert(1123), '*')            //1 2 3
+	fmt.Printf("%s%c\n", convert(353), '*')             //1 2 3
+	fmt.Printf("%s%c\n", convert(349_111_123), '*')     //1 2 3
+	fmt.Printf("%s%c\n", convert(88_999_123), '*')      //1 2 3
+	fmt.Printf("%s%c\n", convert(0), '*')               //1 2 3
+	//
+	//num, err := strconv.Atoi("40")
+	//if err != nil {
+	//	fmt.Println(err)
+	//}
+	//fmt.Println(convert(num))
 
 }
