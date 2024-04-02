@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"log"
+	"net/http"
+)
 
 var oneDigitNames = map[int]string{
 	0: "sıfır",
@@ -99,24 +102,49 @@ func helper(num int, isCategoryWordAdded bool, digitPosition int, digitCount int
 	return helper(leftNum, isCategoryWordAdded, digitPosition+1, digitCount+1) + " " + res
 }
 
+func handler(w http.ResponseWriter, r *http.Request) {
+	//manatStr := r.URL.Query().Get("manat")
+	//qepikStr := r.URL.Query().Get("qepik")
+	//
+	//manat, err := strconv.Atoi(manatStr)
+	//if err != nil {
+	//	http.Error(w, "Invalid manat value", http.StatusBadRequest)
+	//	return
+	//}
+	//
+	//qepik, err := strconv.Atoi(qepikStr)
+	//if err != nil {
+	//	http.Error(w, "Invalid qepik value", http.StatusBadRequest)
+	//	return
+	//}
+	//
+	//w.WriteHeader(http.StatusOK)
+	//w.Header().Set("Content-Type", "application-json")
+	//res := convert(manat) + " manat"
+	//if qepik != 0 {
+	//	return res + convert(qepik) + " qepik"
+	//}
+	//return res
+}
+
 func main() {
-	fmt.Printf("%s%c\n", convert(1), '*')               //ok
-	fmt.Printf("%s%c\n", convert(10), '*')              //1 2 3
-	fmt.Printf("%s%c\n", convert(100), '*')             //1 2 3
-	fmt.Printf("%s%c\n", convert(1_000), '*')           //1 2 3
-	fmt.Printf("%s%c\n", convert(10_000), '*')          //1 2 3
-	fmt.Printf("%s%c\n", convert(100_000), '*')         //1 2 3
-	fmt.Printf("%s%c\n", convert(1_000_000), '*')       //1 2 3
-	fmt.Printf("%s%c\n", convert(10_000_000), '*')      //1 2 3
-	fmt.Printf("%s%c\n", convert(100_000_000), '*')     //1 2 3
-	fmt.Printf("%s%c\n", convert(1_000_000_000), '*')   //1 2 3
-	fmt.Printf("%s%c\n", convert(10_000_000_000), '*')  //1 2 3
-	fmt.Printf("%s%c\n", convert(113_168_135_431), '*') //1 2 3
-	fmt.Printf("%s%c\n", convert(1123), '*')            //1 2 3
-	fmt.Printf("%s%c\n", convert(353), '*')             //1 2 3
-	fmt.Printf("%s%c\n", convert(349_111_123), '*')     //1 2 3
-	fmt.Printf("%s%c\n", convert(88_999_123), '*')      //1 2 3
-	fmt.Printf("%s%c\n", convert(0), '*')               //1 2 3
+	//fmt.Printf("%s%c\n", convert(1), '*')               //ok
+	//fmt.Printf("%s%c\n", convert(10), '*')              //1 2 3
+	//fmt.Printf("%s%c\n", convert(100), '*')             //1 2 3
+	//fmt.Printf("%s%c\n", convert(1_000), '*')           //1 2 3
+	//fmt.Printf("%s%c\n", convert(10_000), '*')          //1 2 3
+	//fmt.Printf("%s%c\n", convert(100_000), '*')         //1 2 3
+	//fmt.Printf("%s%c\n", convert(1_000_000), '*')       //1 2 3
+	//fmt.Printf("%s%c\n", convert(10_000_000), '*')      //1 2 3
+	//fmt.Printf("%s%c\n", convert(100_000_000), '*')     //1 2 3
+	//fmt.Printf("%s%c\n", convert(1_000_000_000), '*')   //1 2 3
+	//fmt.Printf("%s%c\n", convert(10_000_000_000), '*')  //1 2 3
+	//fmt.Printf("%s%c\n", convert(113_168_135_431), '*') //1 2 3
+	//fmt.Printf("%s%c\n", convert(1123), '*')            //1 2 3
+	//fmt.Printf("%s%c\n", convert(353), '*')             //1 2 3
+	//fmt.Printf("%s%c\n", convert(349_111_123), '*')     //1 2 3
+	//fmt.Printf("%s%c\n", convert(88_999_123), '*')      //1 2 3
+	//fmt.Printf("%s%c\n", convert(0), '*')               //1 2 3
 	//
 	//num, err := strconv.Atoi("40")
 	//if err != nil {
@@ -124,4 +152,13 @@ func main() {
 	//}
 	//fmt.Println(convert(num))
 
+	//a, b := math.Modf(11.22)
+	//fmt.Println(a)
+	//fmt.Println(b)
+
+	http.HandleFunc("/convert-num-to-az", handler)
+	err := http.ListenAndServe(":8080", nil)
+	if err != nil {
+		log.Fatalf("Failed to start server: %v\n", err)
+	}
 }
