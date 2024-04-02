@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 var oneDigitNames = map[int]string{
@@ -103,28 +105,45 @@ func helper(num int, isCategoryWordAdded bool, digitPosition int, digitCount int
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	//manatStr := r.URL.Query().Get("manat")
-	//qepikStr := r.URL.Query().Get("qepik")
-	//
-	//manat, err := strconv.Atoi(manatStr)
-	//if err != nil {
-	//	http.Error(w, "Invalid manat value", http.StatusBadRequest)
-	//	return
-	//}
-	//
-	//qepik, err := strconv.Atoi(qepikStr)
-	//if err != nil {
-	//	http.Error(w, "Invalid qepik value", http.StatusBadRequest)
-	//	return
-	//}
-	//
-	//w.WriteHeader(http.StatusOK)
-	//w.Header().Set("Content-Type", "application-json")
-	//res := convert(manat) + " manat"
-	//if qepik != 0 {
-	//	return res + convert(qepik) + " qepik"
-	//}
-	//return res
+	manatStr := r.URL.Query().Get("manat")
+	qepikStr := r.URL.Query().Get("qepik")
+
+	manat, err := strconv.Atoi(manatStr)
+	if err != nil {
+		http.Error(w, "Invalid manat value", http.StatusBadRequest)
+		return
+	}
+
+	qepik, err := strconv.Atoi(qepikStr)
+	if err != nil {
+		http.Error(w, "Invalid qepik value", http.StatusBadRequest)
+		return
+	}
+
+	res := convert(manat) + " manat"
+	if qepik != 0 {
+		res += " " + convert(qepik) + " qepik"
+	}
+
+	resp := &Response{
+		Lang:   "az",
+		Result: res,
+	}
+
+	jsonResponse, err := json.Marshal(resp)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonResponse)
+}
+
+type Response struct {
+	Lang   string `json:"lang"`
+	Result string `json:"result"`
 }
 
 func main() {
