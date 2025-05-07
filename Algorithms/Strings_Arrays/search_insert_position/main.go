@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"runtime"
+)
 
 //Constraints:
 //
@@ -64,5 +67,8 @@ func main() {
 	target = 2
 	res = searchInsert(nums, target)
 	fmt.Println(res)
+
+	fmt.Printf("GOMAXPROCS: %d\n", runtime.GOMAXPROCS(0))
+	fmt.Println(runtime.NumCPU())
 
 }

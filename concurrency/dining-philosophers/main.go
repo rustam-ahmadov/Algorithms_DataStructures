@@ -5,6 +5,7 @@ The classical Dining philosophers problem.
 package main
 
 import (
+	"context"
 	"fmt"
 	"sync"
 	"time"
@@ -12,11 +13,12 @@ import (
 
 const (
 	philosophersCount = 5
+	totalTime         = time.Second * 10
 	slowMotionTime    = time.Millisecond * 20
+	timeToEat         = time.Millisecond * 500
 )
 
 type action string
-type grams int
 
 var (
 	thinking action = "thinking"
@@ -24,24 +26,11 @@ var (
 )
 
 type Fork struct {
-	capacity grams
 	sync.Mutex
 	id int
 }
 
-func newFork(id int, capacity grams) Fork {
-	return Fork{
-		capacity: capacity,
-		id:       id,
-	}
-}
-
 type RisePlate struct {
-	grams grams
-}
-
-func newRisePlate(gr grams) RisePlate {
-	return RisePlate{grams: gr}
 }
 
 type Philosopher struct {
@@ -61,42 +50,40 @@ func newPhilosopher(name string, risePlate *RisePlate, rightFork, leftFork *Fork
 
 var mu sync.Mutex
 
-// region version with deadlock
+func (p *Philosopher) eat() {
+	//right
+	p.rightFork.Lock()
+	defer p.rightFork.Unlock()
+	fmt.Println(p.name, " has taken right fork with id: ", p.rightFork.id)
 
-func eatWithDeadlock(p *Philosopher, wg *sync.WaitGroup, totalRise *int) {
+	time.Sleep(time.Millisecond * 10)
+
+	//left
+	p.leftFork.Lock()
+	defer p.leftFork.Unlock()
+	fmt.Println(p.name, " has taken left fork with id: ", p.leftFork.id)
+
+	//eat
+	fmt.Println(p.name, " is eating", "...")
+	time.Sleep(timeToEat)
+}
+
+func (p *Philosopher) think() {
+	fmt.Println(p.name, " is thinking", "...")
+}
+
+// region version with deadlock
+func eatWithDeadlock(ctx context.Context, p *Philosopher, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	// if we need to do some work
-	for p.plate.grams > 0 {
-
-		//thinking
-		fmt.Println(p.name, " is thinking", "...")
-
-		//trying to take the forks
-		p.rightFork.Lock()
-		time.Sleep(time.Millisecond * 10)
-		fmt.Println(p.name, " has taken right fork with id: ", p.rightFork.id)
-		p.leftFork.Lock()
-		fmt.Println(p.name, " has taken left fork with id: ", p.leftFork.id)
-		//----
-
-		//starting to eat
-		fmt.Println(p.name, " is eating", "...")
-
-		time.Sleep(slowMotionTime)
-
-		totalCap := p.leftFork.capacity + p.rightFork.capacity
-
-		mu.Lock()
-		*totalRise -= int(totalCap)
-		mu.Unlock()
-		p.plate.grams -= totalCap
-
-		//free the forks
-		p.leftFork.Unlock()
-		time.Sleep(time.Millisecond * 10)
-		p.rightFork.Unlock()
+	select {
+	case <-ctx.Done():
+		return
+	default:
+		p.think()
+		p.eat()
 	}
+
 }
 
 // startMealSessionDeadlock with deadlock
@@ -125,51 +112,56 @@ func startMealSessionDeadlock(ps [5]Philosopher) {
 
 // region version with Semaphore
 
-func eatWithSemaphore(ch chan struct{}, p *Philosopher, wg *sync.WaitGroup, totalRise *int) {
+func eatWithSemaphore(ctx context.Context, ch chan struct{}, p *Philosopher, wg *sync.WaitGroup, totalRise *int) {
 	defer wg.Done()
 
 	// if we need to do some work
 	for p.plate.grams > 0 {
 
-		ch <- struct{}{}
+		select {
+		case <-ctx.Done():
+			return
+		default:
+			ch <- struct{}{}
 
-		//thinking
-		fmt.Println(p.name, " is thinking", "...")
+			//thinking
+			fmt.Println(p.name, " is thinking", "...")
 
-		//trying to take the forks
-		p.rightFork.Lock()
-		time.Sleep(time.Millisecond * 10)
-		fmt.Println(p.name, " has taken right fork with id: ", p.rightFork.id)
-		p.leftFork.Lock()
-		fmt.Println(p.name, " has taken left fork with id: ", p.leftFork.id)
-		//----
+			//trying to take the forks
+			p.rightFork.Lock()
+			time.Sleep(time.Millisecond * 10)
+			fmt.Println(p.name, " has taken right fork with id: ", p.rightFork.id)
+			p.leftFork.Lock()
+			fmt.Println(p.name, " has taken left fork with id: ", p.leftFork.id)
+			//----
 
-		//starting to eat
-		fmt.Println(p.name, " is eating", "...")
+			//starting to eat
+			fmt.Println(p.name, " is eating", "...")
 
-		time.Sleep(slowMotionTime)
+			time.Sleep(slowMotionTime)
 
-		totalCap := p.leftFork.capacity + p.rightFork.capacity
+			totalCap := p.leftFork.capacity + p.rightFork.capacity
 
-		mu.Lock()
-		*totalRise -= int(totalCap)
-		mu.Unlock()
+			mu.Lock()
+			*totalRise -= int(totalCap)
+			mu.Unlock()
 
-		p.plate.grams -= totalCap
+			p.plate.grams -= totalCap
 
-		fmt.Println(*totalRise)
+			fmt.Println(*totalRise)
 
-		//free the forks
-		p.leftFork.Unlock()
-		time.Sleep(time.Millisecond * 10)
-		p.rightFork.Unlock()
+			//free the forks
+			p.leftFork.Unlock()
+			time.Sleep(time.Millisecond * 10)
+			p.rightFork.Unlock()
 
-		<-ch
+			<-ch
+		}
 	}
 }
 
 // startMealSession with deadlock
-func startMealSessionWithSemaphore(ps [5]Philosopher) {
+func startMealSessionWithSemaphore(ctx context.Context, ps [5]Philosopher) {
 	var totalRise int
 	for i := range len(ps) {
 		totalRise += int(ps[i].plate.grams)
@@ -179,14 +171,14 @@ func startMealSessionWithSemaphore(ps [5]Philosopher) {
 	wg.Add(philosophersCount)
 
 	//semaphore
-	ch := make(chan struct{}, 2)
+	ch := make(chan struct{}, 4)
 
 	// give freedom and life to philosophers :)
-	go eatWithSemaphore(ch, &ps[0], wg, &totalRise)
-	go eatWithSemaphore(ch, &ps[1], wg, &totalRise)
-	go eatWithSemaphore(ch, &ps[2], wg, &totalRise)
-	go eatWithSemaphore(ch, &ps[3], wg, &totalRise)
-	go eatWithSemaphore(ch, &ps[4], wg, &totalRise)
+	go eatWithSemaphore(ctx, ch, &ps[0], wg, &totalRise)
+	go eatWithSemaphore(ctx, ch, &ps[1], wg, &totalRise)
+	go eatWithSemaphore(ctx, ch, &ps[2], wg, &totalRise)
+	go eatWithSemaphore(ctx, ch, &ps[3], wg, &totalRise)
+	go eatWithSemaphore(ctx, ch, &ps[4], wg, &totalRise)
 
 	wg.Wait()
 	close(ch)
@@ -197,6 +189,9 @@ func startMealSessionWithSemaphore(ps [5]Philosopher) {
 //endregion
 
 func main() {
+
+	ctx, cancel := context.WithTimeout(context.Background(), totalTime)
+	defer cancel()
 
 	fork1 := newFork(0, 5)
 	fork2 := newFork(1, 5)
@@ -218,5 +213,7 @@ func main() {
 
 	philosophers := [5]Philosopher{p1, p2, p3, p4, p5}
 
-	startMealSessionWithSemaphore(philosophers)
+	start := time.Now()
+	startMealSessionWithSemaphore(ctx, philosophers)
+	fmt.Println(time.Since(start))
 }
